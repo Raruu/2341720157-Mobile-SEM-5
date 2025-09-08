@@ -32,6 +32,7 @@ if (test) {
 }
 ```
 #### Apa yang terjadi ? Jika terjadi error, silakan perbaiki namun tetap menggunakan if/else.
+Terjadi pengecekan pada variable `test`\
 Terjadi error karena `test` bernilai string `"true"` dan tidak dapat dievaluasi sebagai boolean. Diperbaiki dengan menggati tipe data dengan `bool`
 sehingga:
 ``` dart
@@ -106,7 +107,9 @@ print(index);
 ```
 #### Apa yang terjadi ? Jika terjadi error, silakan perbaiki namun tetap menggunakan for dan break-continue.
 Terjadi perulangan for-loop sebanyak 17 kali, namun karena adanya `break` ketika `index` sama dengan 21, maka perulangan akan berhenti. Selain itu, terdapat juga `continue` ketika `index` lebih dari 1 atau kurang dari 7, maka perulangan akan melanjutkan ke iterasi berikutnya tanpa mengeksekusi kode di bawahnya. Output yang dihasilkan tidak ada.\
-Terjadi error karena penulisan `index` dan logika `if`, `else if` tidak benar
+Terjadi error karena penulisan `index` dan logika `if`, `else if` tidak benar\
+Output (tidak ada output, karena `else if (index > 1 || index < 7)  continue;`):\
+![alt](./img/p3s3.png)
 
 ## 2. Buatlah sebuah program yang dapat menampilkan bilangan prima dari angka 0 sampai 201 menggunakan Dart. Ketika bilangan prima ditemukan, maka tampilkan nama lengkap dan NIM Anda.
 [Code](./src/soal2.dart):
