@@ -14,3 +14,4 @@
 | **Week-x** | **Title**                                                  |
 | :--------: | :--------------------------------------------------------- |
 |   **02**   | [Pengantar Bahasa Pemrograman Dart - Bagian 1](./Week-02/) |
+|   **03**   | [Pengantar Bahasa Pemrograman Dart - Bagian 2](./Week-03/) |
