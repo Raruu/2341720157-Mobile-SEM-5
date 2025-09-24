@@ -423,6 +423,13 @@ class _MyHomePageState extends State<MyHomePage> {
 Hasil:\
 ![alt](./img/p5s6.gif)
 
+# Codelab: [Your first Flutter app](https://codelabs.developers.google.com/codelabs/flutter-codelab-first#0)
+
+#### Hasil akhir:
+![alt](./img/codelab_final.png)
+![alt](./img/codelab_favorites.png)
+![alt](./img/codelab_identitas.png)
+
 # Info
 
 - Selesaikan Praktikum 2 dan Anda wajib menjalankan aplikasi hello_world pada perangkat fisik (device Android/iOS) agar Anda mempunyai pengalaman untuk menghubungkan ke perangkat fisik. Capture hasil aplikasi di perangkat, lalu buatlah laporan praktikum pada file README.md.
