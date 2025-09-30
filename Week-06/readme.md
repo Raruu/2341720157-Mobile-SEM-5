@@ -403,7 +403,8 @@ Hasil:\
 1. Untuk melakukan pengiriman data ke halaman berikutnya, cukup menambahkan informasi arguments pada penggunaan Navigator.Perbarui kode pada bagian Navigator menjadi seperti berikut.
 
    ```dart
-   Navigator.pushNamed(context, '/item', arguments: item);
+    onTap: () =>
+        Navigator.pushNamed(context, '/item', arguments: item),
    ```
 
 2. Pembacaan nilai yang dikirimkan pada halaman sebelumnya dapat dilakukan menggunakan ModalRoute. Tambahkan kode berikut pada blok fungsi build dalam halaman ItemPage. Setelah nilai didapatkan, anda dapat menggunakannya seperti penggunaan variabel pada umumnya. (https://docs.flutter.dev/cookbook/navigation/navigate-with-arguments)
@@ -412,7 +413,318 @@ Hasil:\
    final itemArgs = ModalRoute.of(context)!.settings.arguments as Item;
    ```
 
+   Hasil:\
+    ![alt](./img/tg2s2.gif)
+
 3. Pada hasil akhir dari aplikasi belanja yang telah anda selesaikan, tambahkan atribut foto produk, stok, dan rating. Ubahlah tampilan menjadi GridView seperti di aplikasi marketplace pada umumnya.
+
+<details>
+<summary>Expand Code home_page.dart:</summary>
+
+```dart
+import 'package:belanja/models/item.dart';
+import 'package:belanja/widgets/shop_card_item.dart';
+import 'package:flutter/material.dart';
+
+class HomePage extends StatelessWidget {
+  HomePage({super.key});
+
+  final List<Item> items = [
+    Item(
+      name: 'Bawang Goreng',
+      price: 2500,
+      imgPath: 'images/bgoreng.webp',
+      stok: 50,
+      rating: 4.8,
+    ),
+    Item(
+      name: 'Garam',
+      price: 2000,
+      imgPath: 'images/garam.webp',
+      stok: 57,
+      rating: 4.7,
+    ),
+    Item(
+      name: 'Gula',
+      price: 5000,
+      imgPath: 'images/gula.webp',
+      rating: 5.0,
+      stok: 100,
+    ),
+
+    Item(
+      name: 'Kopi',
+      price: 10000,
+      imgPath: 'images/kopi.webp',
+      stok: 900,
+      rating: 4.1,
+    ),
+    Item(
+      name: 'Minyak Goreng',
+      price: 47000,
+      imgPath: 'images/minyak.webp',
+      stok: 13,
+      rating: 4.6,
+    ),
+    Item(
+      name: 'Teh',
+      price: 5000,
+      imgPath: 'images/teh.jpg',
+      stok: 100,
+      rating: 4.9,
+    ),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        title: Text(
+          'Belanja by Hidayat Widi Saputra | 2341720157',
+          overflow: TextOverflow.ellipsis,
+        ),
+        elevation: 0,
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.black,
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(12.0),
+        child: GridView.builder(
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            crossAxisSpacing: 12,
+            mainAxisSpacing: 12,
+            childAspectRatio: 0.78,
+          ),
+          itemCount: items.length,
+          itemBuilder: (context, index) {
+            final item = items[index];
+            return ShopCardItem(
+              onTap: () =>
+                  Navigator.pushNamed(context, '/item', arguments: item),
+              item: item,
+            );
+          },
+        ),
+      ),
+    );
+  }
+}
+```
+
+</details>
+
+<details>
+<summary>Expand Code shop_card_item.dart:</summary>
+
+```dart
+import 'package:belanja/models/item.dart';
+import 'package:flutter/material.dart';
+
+class ShopCardItem extends StatelessWidget {
+const ShopCardItem({super.key, required this.item, required this.onTap});
+
+final Item item;
+final Function() onTap;
+
+@override
+Widget build(BuildContext context) {
+return InkWell(
+borderRadius: BorderRadius.circular(12),
+onTap: onTap,
+child: Card(
+shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+elevation: 2,
+color: Colors.white,
+child: Column(
+crossAxisAlignment: CrossAxisAlignment.stretch,
+children: [
+Expanded(
+flex: 6,
+child: ClipRRect(
+borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
+child: Image.asset(
+item.imgPath,
+fit: BoxFit.cover,
+errorBuilder: (context, error, stackTrace) => Container(
+color: Colors.grey[200],
+child: Center(
+child: Icon(
+Icons.image_not_supported,
+color: Colors.grey,
+size: 40,
+),
+),
+),
+),
+),
+),
+Expanded(
+flex: 4,
+child: Padding(
+padding: const EdgeInsets.symmetric(
+horizontal: 10,
+vertical: 8,
+),
+child: Column(
+crossAxisAlignment: CrossAxisAlignment.start,
+mainAxisAlignment: MainAxisAlignment.spaceBetween,
+children: [
+Text(
+item.name,
+style: TextStyle(fontWeight: FontWeight.w600),
+maxLines: 2,
+overflow: TextOverflow.ellipsis,
+),
+Row(
+mainAxisAlignment: MainAxisAlignment.spaceBetween,
+children: [
+Row(
+children: [
+Icon(Icons.star, size: 14, color: Colors.amber),
+SizedBox(width: 4),
+Text(
+item.rating.toString(),
+style: TextStyle(
+fontSize: 12,
+color: Colors.black54,
+),
+),
+],
+),
+Text(
+'Rp ${item.price}',
+style: TextStyle(fontWeight: FontWeight.w700),
+),
+],
+),
+],
+),
+),
+),
+],
+),
+),
+);
+}
+}
+
+````
+</details>
+
+<details>
+<summary>Expand Code item_page.dart:</summary>
+
+```dart
+import 'package:belanja/models/item.dart';
+import 'package:flutter/material.dart';
+
+class ItemPage extends StatelessWidget {
+  const ItemPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final itemArgs = ModalRoute.of(context)!.settings.arguments as Item;
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.black,
+        elevation: 0,
+        title: Text(itemArgs.name, style: TextStyle(fontSize: 16)),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            AspectRatio(
+              aspectRatio: 16 / 10,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: Image.asset(
+                  itemArgs.imgPath,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) => Container(
+                    color: Colors.grey[200],
+                    child: Center(
+                      child: Icon(
+                        Icons.image_not_supported,
+                        color: Colors.grey,
+                        size: 48,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(height: 16),
+            Text(
+              itemArgs.name,
+              style: TextStyle(fontSize: 22, fontWeight: FontWeight.w700),
+            ),
+            SizedBox(height: 8),
+            Text(
+              'Rp ${itemArgs.price}',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+                color: Colors.black87,
+              ),
+            ),
+            SizedBox(height: 12),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    Icon(Icons.star, color: Colors.amber, size: 18),
+                    SizedBox(width: 6),
+                    Text(
+                      itemArgs.rating.toString(),
+                      style: TextStyle(fontSize: 14),
+                    ),
+                  ],
+                ),
+                Text(
+                  'Stok: ${itemArgs.stok}',
+                  style: TextStyle(fontSize: 14, color: Colors.black54),
+                ),
+              ],
+            ),
+            Spacer(),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                padding: EdgeInsets.symmetric(vertical: 14),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+              onPressed: () {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('${itemArgs.name} ditambahkan ke keranjang'),
+                  ),
+                );
+              },
+              child: Text(
+                'Tambah ke Keranjang',
+                style: TextStyle(fontSize: 16),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+````
+
+</details>
+
+Hasilnya:\
+![alt](./img/tg2s3.gif)
 
 4. Silakan implementasikan Hero widget pada aplikasi belanja Anda dengan mempelajari dari sumber ini: https://docs.flutter.dev/cookbook/navigation/hero-animations
 

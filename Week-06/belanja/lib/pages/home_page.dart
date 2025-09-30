@@ -1,42 +1,85 @@
 import 'package:belanja/models/item.dart';
+import 'package:belanja/widgets/shop_card_item.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatelessWidget {
   HomePage({super.key});
 
   final List<Item> items = [
-    Item(name: 'Sugar', price: 5000),
-    Item(name: 'Salt', price: 2000),
+    Item(
+      name: 'Bawang Goreng',
+      price: 2500,
+      imgPath: 'images/bgoreng.webp',
+      stok: 50,
+      rating: 4.8,
+    ),
+    Item(
+      name: 'Garam',
+      price: 2000,
+      imgPath: 'images/garam.webp',
+      stok: 57,
+      rating: 4.7,
+    ),
+    Item(
+      name: 'Gula',
+      price: 5000,
+      imgPath: 'images/gula.webp',
+      rating: 5.0,
+      stok: 100,
+    ),
+
+    Item(
+      name: 'Kopi',
+      price: 10000,
+      imgPath: 'images/kopi.webp',
+      stok: 900,
+      rating: 4.1,
+    ),
+    Item(
+      name: 'Minyak Goreng',
+      price: 47000,
+      imgPath: 'images/minyak.webp',
+      stok: 13,
+      rating: 4.6,
+    ),
+    Item(
+      name: 'Teh',
+      price: 5000,
+      imgPath: 'images/teh.jpg',
+      stok: 100,
+      rating: 4.9,
+    ),
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        margin: EdgeInsets.all(8),
-        child: ListView.builder(
-          padding: EdgeInsets.all(8),
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        title: Text(
+          'Belanja by Hidayat Widi Saputra | 2341720157',
+          overflow: TextOverflow.ellipsis,
+        ),
+        elevation: 0,
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.black,
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(12.0),
+        child: GridView.builder(
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            crossAxisSpacing: 12,
+            mainAxisSpacing: 12,
+            childAspectRatio: 0.78,
+          ),
           itemCount: items.length,
           itemBuilder: (context, index) {
             final item = items[index];
-            return InkWell(
-              onTap: () => Navigator.pushNamed(context, '/item'),
-              child: Card(
-                child: Container(
-                  margin: EdgeInsets.all(8),
-                  child: Row(
-                    children: [
-                      Expanded(child: Text(item.name)),
-                      Expanded(
-                        child: Text(
-                          item.price.toString(),
-                          textAlign: TextAlign.end,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+            return ShopCardItem(
+              onTap: () =>
+                  Navigator.pushNamed(context, '/item', arguments: item),
+              item: item,
             );
           },
         ),
