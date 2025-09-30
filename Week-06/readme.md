@@ -50,8 +50,8 @@ Langkah pertama adalah memecah tata letak menjadi elemen dasarnya:
 - ### Apakah UI memerlukan tab?
   TIdak
 - ### Perhatikan area yang memerlukan alignment, padding, atau borders.
-  - Title section: `MainAlignment` pada column adalah center
-  - Kolom teks di dalam baris judul perlu diberi Expanded agar mengambil ruang sisa.
+  - Title section: `CrossAxisAlignment` pada column adalah start
+  - Kolom teks di dalam baris judul dapat diberi Spacer/Expanded agar mengambil ruang sisa.
   - Teks dalam blok deskripsi perlu Padding agar tidak mepet ke tepi layar.
 
 #### Langkah 4: Implementasi title row
@@ -230,5 +230,54 @@ Hasil:\
 
 
 ## 2. Silakan implementasikan di project baru "basic_layout_flutter" dengan mengakses sumber ini: https://docs.flutter.dev/codelabs/layout-basics
+
+#### Menambahk/menerapkan stack dan card
+```dart
+return MaterialApp(
+  title: 'Flutter layout: Hidayat Widi Saputra dan 2341720157',
+  home: Scaffold(
+    appBar: AppBar(title: const Text('Hidayat Widi Saputra | 2341720157')),
+    body: ListView(
+      children: [
+        Stack(
+          alignment: AlignmentDirectional.center,
+          children: [
+            Image.asset(
+              'imgs/kivotos_night.jpg',
+              width: 600,
+              height: 240,
+              fit: BoxFit.cover,
+            ),
+            Positioned(
+              bottom: 16,
+              left: 16,
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  vertical: 8.0,
+                  horizontal: 16.0,
+                ),
+                color: Colors.black54,
+                child: const Text(
+                  'Kivotos night',
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+            ),
+          ],
+        ),
+        titleSection,
+        Card(
+          elevation: 4.0,
+          margin: EdgeInsets.all(16.0),
+          child: Column(children: [buttonSection, textSection]),
+        ),
+      ],
+    ),
+  ),
+);
+```
+
+Sehingga hasil akhirnya:\
+![alt](./img/tg1s2.png)
 
 ## 3. Kumpulkan link commit repository GitHub Anda kepada dosen yang telah disepakati!
