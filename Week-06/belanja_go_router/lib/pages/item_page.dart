@@ -1,19 +1,32 @@
-import 'package:belanja/models/item.dart';
+import 'package:belanja_go_router/models/item.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class ItemPage extends StatelessWidget {
-  const ItemPage({super.key});
+  final Item itemArgs;
+
+  const ItemPage({super.key, required this.itemArgs});
 
   @override
   Widget build(BuildContext context) {
-    final itemArgs = ModalRoute.of(context)!.settings.arguments as Item;
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
         foregroundColor: Colors.black,
         elevation: 0,
-        title: Text(itemArgs.name, style: TextStyle(fontSize: 16)),
+        title: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          spacing: 16.0,
+          children: [
+            IconButton(
+              onPressed: () =>
+                  context.canPop() ? context.pop() : context.go('/'),
+              icon: Icon(Icons.arrow_back),
+            ),
+            Text(itemArgs.name, style: TextStyle(fontSize: 16)),
+          ],
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),

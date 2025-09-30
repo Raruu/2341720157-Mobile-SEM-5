@@ -1,4 +1,4 @@
-import 'package:belanja/models/item.dart';
+import 'package:belanja_go_router/models/item.dart';
 import 'package:flutter/material.dart';
 
 class ShopCardItem extends StatelessWidget {

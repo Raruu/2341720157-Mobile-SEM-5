@@ -610,7 +610,8 @@ style: TextStyle(fontWeight: FontWeight.w700),
 }
 }
 
-````
+```
+
 </details>
 
 <details>
@@ -719,7 +720,7 @@ class ItemPage extends StatelessWidget {
     );
   }
 }
-````
+```
 
 </details>
 
@@ -728,6 +729,59 @@ Hasilnya:\
 
 4. Silakan implementasikan Hero widget pada aplikasi belanja Anda dengan mempelajari dari sumber ini: https://docs.flutter.dev/cookbook/navigation/hero-animations
 
+```dart
+// Menambahkan Hero pada widget asal
+child: Hero(
+  tag: itemArgs.imgPath,
+  child: Image.asset(
+    itemArgs.imgPath,
+
+// Menambahkan Hero pada widget tujuan
+child: Hero(
+  tag: item.imgPath,
+  child: Image.asset(
+    item.imgPath,
+```
+
+Hasil:\
+![alt](./img/tg2s4.gif)
+
 5. Sesuaikan dan modifikasi tampilan sehingga menjadi aplikasi yang menarik. Selain itu, pecah widget menjadi kode yang lebih kecil. Tambahkan Nama dan NIM di footer aplikasi belanja Anda.
 
 6. Selesaikan Praktikum 5: Navigasi dan Rute tersebut. Cobalah modifikasi menggunakan plugin go_router, lalu dokumentasikan dan push ke repository Anda berupa screenshot setiap hasil pekerjaan beserta penjelasannya di file README.md. Kumpulkan link commit repository GitHub Anda kepada dosen yang telah disepakati!
+
+#### Membuat konfigurasi go_router, `router.dart`:
+
+```dart
+final router = GoRouter(
+  routes: [
+    GoRoute(path: '/', builder: (context, state) => HomePage()),
+    GoRoute(
+      path: '/item',
+      redirect: (context, state) => state.extra == null ? '/' : null,
+      builder: (context, state) => ItemPage(itemArgs: state.extra as Item),
+    ),
+  ],
+);
+```
+
+#### Menggunakan MaterialApp.router dan menggunkan konfigurasi router
+
+```dart
+return MaterialApp.router(
+  routerConfig: router,
+  theme: ThemeData(
+    colorScheme: ColorScheme.fromSeed(seedColor: Colors.pinkAccent),
+    useMaterial3: true,
+  ),
+);
+```
+
+#### Menggunakan `context.go` untuk berpindah, misal:
+
+```dart
+context.go('/item', extra: item) // extra untuk mengirim objek
+```
+
+Hasi:\
+![alt](./img/tg2s6.gif)
