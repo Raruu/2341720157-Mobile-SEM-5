@@ -143,7 +143,7 @@ ElevatedButton(
 
 ## Langkah 1: Buka file main.dart
 
-Tambahkan tiga method berisi kode seperti berikut di dalam class _FuturePageState.
+Tambahkan tiga method berisi kode seperti berikut di dalam class \_FuturePageState.
 
 ```dart
 Future<int> returnOneAsync() async {
@@ -189,19 +189,114 @@ Lakukan comment kode sebelumnya, ubah isi kode onPressed() menjadi seperti berik
 Akhirnya, run atau tekan F5 jika aplikasi belum running. Maka Anda akan melihat seperti gambar berikut, hasil angka 6 akan tampil setelah delay 9 detik.
 
 ### Soal 4
+
 - Jelaskan maksud kode langkah 1 dan 2 tersebut!
-    - Langkah 1 – membuat tiga method async\
-        Tujuannya hanya men-supply pekerjaan “pura-pura lama” (3 detik) yang nanti akan dijalankan secara berurutan.
-        - Masing-masing method mengembalikan Future<int> dengan nilai 1, 2, dan 3.
-        - await Future.delayed(...) membuat prosesnya benar-benar menunggu 3 detik sebelum mengembalikan angka tersebut, sehingga kita punya “task” yang bisa dipantau waktunya.
-    - Langkah 2 – method count()\
-    Method ini menunjukkan pola urutan (sequential) pada operasi async:
-        - Mulai dengan total = 0.
-        - Menunggu returnOneAsync() selesai (3 detik), ambil hasil 1 → total = 1.
-        - Menunggu returnTwoAsync() selesai (3 detik lagi), tambahkan 2 → total = 3.
-        - Menunggu returnThreeAsync() selesai (3 detik lagi), tambahkan 3 → total = 6.
-        - Setelah ketiga tugas selesai (total ~9 detik), baru memanggil setState untuk memperbarui UI dengan angka 6.
+  - Langkah 1 – membuat tiga method async\
+     Tujuannya hanya men-supply pekerjaan “pura-pura lama” (3 detik) yang nanti akan dijalankan secara berurutan.
+    - Masing-masing method mengembalikan Future<int> dengan nilai 1, 2, dan 3.
+    - await Future.delayed(...) membuat prosesnya benar-benar menunggu 3 detik sebelum mengembalikan angka tersebut, sehingga kita punya “task” yang bisa dipantau waktunya.
+  - Langkah 2 – method count()\
+    Method ini menunjukkan pola urutan (sequential) pada operasi async: - Mulai dengan total = 0. - Menunggu returnOneAsync() selesai (3 detik), ambil hasil 1 → total = 1. - Menunggu returnTwoAsync() selesai (3 detik lagi), tambahkan 2 → total = 3. - Menunggu returnThreeAsync() selesai (3 detik lagi), tambahkan 3 → total = 6. - Setelah ketiga tugas selesai (total ~9 detik), baru memanggil setState untuk memperbarui UI dengan angka 6.
 - Capture hasil praktikum Anda berupa GIF dan lampirkan di README. Lalu lakukan commit dengan pesan "W11: Soal 4".
-    - Hasil:\
+  - Hasil:\
     ![alt](./img/p2result.webp)
 
+# Praktikum 3: Menggunakan Completer di Future
+
+## Langkah 1: Buka main.dart
+
+Pastikan telah impor package async berikut.
+
+```dart
+import 'package:async/async.dart';
+```
+
+## Langkah 2: Tambahkan variabel dan method
+
+Tambahkan variabel late dan method di class \_FuturePageState seperti ini.
+
+```dart
+late Completer completer;
+
+Future getNumber() {
+  completer = Completer<int>();
+  calculate();
+  return completer.future;
+}
+
+Future calculate() async {
+  await Future.delayed(const Duration(seconds: 5));
+  completer.complete(42);
+}
+```
+
+## Langkah 3: Ganti isi kode onPressed()
+
+Tambahkan kode berikut pada fungsi onPressed(). Kode sebelumnya bisa Anda comment.
+
+```dart
+getNumber().then((value) {
+  setState(() {
+    result = value.toString();
+  });
+});
+```
+
+## Langkah 4:
+
+Terakhir, run atau tekan F5 untuk melihat hasilnya jika memang belum running. Bisa juga lakukan hot restart jika aplikasi sudah running. Maka hasilnya akan seperti gambar berikut ini. Setelah 5 detik, maka angka 42 akan tampil.
+
+## Langkah 5: Ganti method calculate()
+
+Gantilah isi code method calculate() seperti kode berikut, atau Anda dapat membuat calculate2()
+
+```dart
+Future calculate() async {
+  try {
+    await Future.delayed(const Duration(seconds: 5));
+    completer.complete(42);
+  } catch (e) {
+    completer.completeError(e);
+  }
+}
+```
+
+### Soal 5
+
+- Jelaskan maksud kode langkah 2 tersebut!
+  - late Completer completer;\
+    Menyediakan wadah (Completer) yang nanti akan men-complete sebuah Future<int> secara manual.
+  - getNumber()\
+    Membuat instance Completer<int> baru.
+    Langsung memanggil calculate() (tanpa await), jadi tidak menunggu 5 detik.
+    Langsung mengembalikan completer.future ke pemanggil. Pemanggil langsung mendapat Future yang belum selesai; nilai akan datang nanti.
+  - calculate()\
+    Menunggu 5 detik.
+    Setelah 5 detik, memanggil completer.complete(42). Saat itulah Future yang dikembalikan getNumber() selesai dengan nilai 42.
+- Capture hasil praktikum Anda berupa GIF dan lampirkan di README. Lalu lakukan commit dengan pesan "W11: Soal 5".
+  Hasil:\
+   ![alt](./img/p3s4.webp)
+
+## Langkah 6: Pindah ke onPressed()
+
+Ganti menjadi kode seperti berikut.
+
+```dart
+getNumber()
+.then((value) {
+  setState(() {
+    result = value.toString();
+  });
+})
+.catchError((e) {
+  result = 'An error occurred';
+});
+```
+
+### Soal 6
+
+- Jelaskan maksud perbedaan kode langkah 2 dengan langkah 5-6 tersebut!
+  - Perbedaanya pada kode langkah 5-6 dapat menghandle jika terjadi error
+- Capture hasil praktikum Anda berupa GIF dan lampirkan di README. Lalu lakukan commit dengan pesan "W11: Soal 6".
+  Hasil:\
+   ![alt](./img/p3s4.webp)
