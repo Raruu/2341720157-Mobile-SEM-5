@@ -127,13 +127,81 @@ ElevatedButton(
 ```
 
 ### Soal 3
+
 - Jelaskan maksud kode langkah 5 tersebut terkait substring dan catchError!
-    - substring(0, 450)\
-        Memotong string hasil value.body agar hanya 450 karakter pertama yang disimpan di variabel result.
-        Tujuannya agar widget Text tidak menampilkan seluruh respons (yang bisa sangat panjang) melainkan cuplikan singkat saja.
-    - catchError((_) { … })\
-        Menangkap setiap kegagalan yang terjadi selama pemanggilan getData() maupun saat menjalankan then, termasuk bila substring(0, 450) gagal (mis. karena body-nya kosong atau kurang dari 450 karakter).
-        Ketika ada error, result diisi string 'An error occurred' dan setState dipanggil untuk memperbarui tampilan.
+  - substring(0, 450)\
+     Memotong string hasil value.body agar hanya 450 karakter pertama yang disimpan di variabel result.
+    Tujuannya agar widget Text tidak menampilkan seluruh respons (yang bisa sangat panjang) melainkan cuplikan singkat saja.
+  - catchError((\_) { … })\
+     Menangkap setiap kegagalan yang terjadi selama pemanggilan getData() maupun saat menjalankan then, termasuk bila substring(0, 450) gagal (mis. karena body-nya kosong atau kurang dari 450 karakter).
+    Ketika ada error, result diisi string 'An error occurred' dan setState dipanggil untuk memperbarui tampilan.
 - Capture hasil praktikum Anda berupa GIF dan lampirkan di README. Lalu lakukan commit dengan pesan "W11: Soal 3".
-    - Hasil:\
+  - Hasil:\
     ![hasil](./img/p1result.webp)
+
+# Praktikum 2: Menggunakan await/async untuk menghindari callbacks
+
+## Langkah 1: Buka file main.dart
+
+Tambahkan tiga method berisi kode seperti berikut di dalam class _FuturePageState.
+
+```dart
+Future<int> returnOneAsync() async {
+  await Future.delayed(const Duration(seconds: 3));
+  return 1;
+}
+
+Future<int> returnTwoAsync() async {
+  await Future.delayed(const Duration(seconds: 3));
+  return 2;
+}
+
+Future<int> returnThreeAsync() async {
+  await Future.delayed(const Duration(seconds: 3));
+  return 3;
+}
+```
+
+## Langkah 2: Tambah method count()
+
+Lalu tambahkan lagi method ini di bawah ketiga method sebelumnya.
+
+```dart
+Future count() async {
+  int total = 0;
+  total = await returnOneAsync();
+  total += await returnTwoAsync();
+  total += await returnThreeAsync();
+  setState(() {
+    result = total.toString();
+  });
+}
+```
+
+## Langkah 3: Panggil count()
+
+Lakukan comment kode sebelumnya, ubah isi kode onPressed() menjadi seperti berikut.
+
+![alt](./img/p2s3.png)
+
+## Langkah 4: Run
+
+Akhirnya, run atau tekan F5 jika aplikasi belum running. Maka Anda akan melihat seperti gambar berikut, hasil angka 6 akan tampil setelah delay 9 detik.
+
+### Soal 4
+- Jelaskan maksud kode langkah 1 dan 2 tersebut!
+    - Langkah 1 – membuat tiga method async\
+        Tujuannya hanya men-supply pekerjaan “pura-pura lama” (3 detik) yang nanti akan dijalankan secara berurutan.
+        - Masing-masing method mengembalikan Future<int> dengan nilai 1, 2, dan 3.
+        - await Future.delayed(...) membuat prosesnya benar-benar menunggu 3 detik sebelum mengembalikan angka tersebut, sehingga kita punya “task” yang bisa dipantau waktunya.
+    - Langkah 2 – method count()\
+    Method ini menunjukkan pola urutan (sequential) pada operasi async:
+        - Mulai dengan total = 0.
+        - Menunggu returnOneAsync() selesai (3 detik), ambil hasil 1 → total = 1.
+        - Menunggu returnTwoAsync() selesai (3 detik lagi), tambahkan 2 → total = 3.
+        - Menunggu returnThreeAsync() selesai (3 detik lagi), tambahkan 3 → total = 6.
+        - Setelah ketiga tugas selesai (total ~9 detik), baru memanggil setState untuk memperbarui UI dengan angka 6.
+- Capture hasil praktikum Anda berupa GIF dan lampirkan di README. Lalu lakukan commit dengan pesan "W11: Soal 4".
+    - Hasil:\
+    ![alt](./img/p2result.webp)
+
