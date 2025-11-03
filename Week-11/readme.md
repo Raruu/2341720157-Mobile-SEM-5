@@ -369,6 +369,7 @@ final futures = Future.wait<int>([
 Jelaskan maksud perbedaan kode langkah 1 dan 4!
 
 - Future.wait([...])
+
   - Sudah built-in ke Dart.
   - Langsung mengembalikan List<T> berisi hasil semua Future begitu semuanya selesai.
   - Lebih ringkas & idiomatic:
@@ -382,3 +383,58 @@ Jelaskan maksud perbedaan kode langkah 1 dan 4!
   - Harus buat objek FutureGroup, .add() satu per satu, lalu .close() untuk menandai “tidak ada lagi Future yang akan ditambahkan”.
   - Setelah itu await futureGroup.future baru menghasilkan List<T>.
   - Penulisannya lebih panjang, tapi dulu (sebelum Future.wait populer) dipakai kalau butuh API yang bisa “nambah-nambah Future dinamis” lalu menutupnya.
+
+# Praktikum 5: Menangani Respon Error pada Async Code
+
+## Langkah 1: Buka file main.dart
+
+Tambahkan method ini ke dalam class \_FuturePageState
+
+```dart
+Future<int> returnError() async {
+  await Future.delayed(const Duration(seconds: 2));
+  throw Exception('Something terrible happened!');
+}
+```
+
+## Langkah 2: ElevatedButton
+
+Ganti dengan kode berikut
+
+```dart
+returnError()
+    .then((value) {
+      setState(() {
+        result = 'Success';
+      });
+    })
+    .catchError((onError) {
+      setState(() {
+        result = onError.toString();
+      });
+    })
+    .whenComplete(() => print('Complete'));
+```
+
+## Langkah 3: Run
+
+Lakukan run dan klik tombol GO! maka akan menghasilkan seperti gambar berikut.
+
+### Soal 9
+
+Capture hasil praktikum Anda berupa GIF dan lampirkan di README. Lalu lakukan commit dengan pesan "W11: Soal 9".
+
+![alt](./img/p5s3.webp)
+
+![alt](./img/p5s3.png)
+
+## Langkah 4: Tambah method handleError()
+
+Tambahkan kode ini di dalam class _FutureStatePage
+
+### Soal 10
+Panggil method handleError() tersebut di ElevatedButton, lalu run. Apa hasilnya? Jelaskan perbedaan kode langkah 1 dan 4!
+
+![alt](./img/p5s3.webp)
+
+![alt](./img/p5s3.png)
