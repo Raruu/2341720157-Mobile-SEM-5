@@ -300,3 +300,85 @@ getNumber()
 - Capture hasil praktikum Anda berupa GIF dan lampirkan di README. Lalu lakukan commit dengan pesan "W11: Soal 6".
   Hasil:\
    ![alt](./img/p3s4.webp)
+
+# Praktikum 4: Memanggil Future secara paralel
+
+Library:
+
+```shell
+flutter pub add async
+```
+
+## Langkah 1: Buka file main.dart
+
+Tambahkan method ini ke dalam class \_FuturePageState
+
+```dart
+Future returnFG() async {
+  FutureGroup<int> futureGroup = FutureGroup<int>();
+  futureGroup.add(returnOneAsync());
+  futureGroup.add(returnTwoAsync());
+  futureGroup.add(returnThreeAsync());
+  futureGroup.close();
+  final futures = await futureGroup.future;
+  int total = 0;
+  for (var num in futures) {
+    total += num;
+  }
+  setState(() {
+    result = total.toString();
+  });
+}
+```
+
+## Langkah 2: Edit onPressed()
+
+Anda bisa hapus atau comment kode sebelumnya, kemudian panggil method dari langkah 1 tersebut.
+
+```dart
+ElevatedButton(
+            onPressed: () {
+              returnFG();
+              // getNumber()
+```
+
+## Langkah 3: Run
+
+Anda akan melihat hasilnya dalam 3 detik berupa angka 6 lebih cepat dibandingkan praktikum sebelumnya menunggu sampai 9 detik.
+
+### Soal 7
+
+Capture hasil praktikum Anda berupa GIF dan lampirkan di README. Lalu lakukan commit dengan pesan "W11: Soal 7".
+
+![alt](./img/p4s3.webp)
+
+## Langkah 4: Ganti variabel futureGroup
+
+Anda dapat menggunakan FutureGroup dengan Future.wait seperti kode berikut.
+
+```dart
+final futures = Future.wait<int>([
+  returnOneAsync(),
+  returnTwoAsync(),
+  returnThreeAsync(),
+]);
+```
+
+### Soal 8
+
+Jelaskan maksud perbedaan kode langkah 1 dan 4!
+
+- Future.wait([...])
+  - Sudah built-in ke Dart.
+  - Langsung mengembalikan List<T> berisi hasil semua Future begitu semuanya selesai.
+  - Lebih ringkas & idiomatic:
+
+  ```dart
+  final futures = await Future.wait([...]);
+  int total = futures.reduce((a,b)=>a+b);
+  ```
+
+- FutureGroup (dari pak async)
+  - Harus buat objek FutureGroup, .add() satu per satu, lalu .close() untuk menandai “tidak ada lagi Future yang akan ditambahkan”.
+  - Setelah itu await futureGroup.future baru menghasilkan List<T>.
+  - Penulisannya lebih panjang, tapi dulu (sebelum Future.wait populer) dipakai kalau butuh API yang bisa “nambah-nambah Future dinamis” lalu menutupnya.
