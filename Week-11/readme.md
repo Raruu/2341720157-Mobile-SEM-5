@@ -554,12 +554,11 @@ Tambahkan widget loading seperti kode berikut. Lalu hot restart, perhatikan peru
   }
   ```
 
-- Apakah Anda mendapatkan koordinat GPS ketika run di browser? Mengapa demikian?\
-
+- Apakah Anda mendapatkan koordinat GPS ketika run di browser? Mengapa demikian?
   - Ya, Saya mendapatkan koordinat ketika run di browser (chrome):
     ![chrome](./img/p6chrome.webp)
 
-- Capture hasil praktikum Anda berupa GIF dan lampirkan di README. Lalu lakukan commit dengan pesan "W11: Soal 12".
+- Capture hasil praktikum Anda berupa GIF dan lampirkan di README. Lalu lakukan commit dengan pesan "W11: Soal 12".\
   Hasil:\
   ![hasil](./img/p6result.webp)
 
@@ -632,7 +631,7 @@ Widget build(BuildContext context) {
 
 - Apakah ada perbedaan UI dengan praktikum sebelumnya? Mengapa demikian?
   - Tidak ada, karena perubahan bukan pada bagian ui
-- Capture hasil praktikum Anda berupa GIF dan lampirkan di README. Lalu lakukan commit dengan pesan "W11: Soal 13".
+- Capture hasil praktikum Anda berupa GIF dan lampirkan di README. Lalu lakukan commit dengan pesan "W11: Soal 13".\
   ![hasil](./img/p6result.webp)
 - Seperti yang Anda lihat, menggunakan FutureBuilder lebih efisien, clean, dan reactive dengan Future bersama UI.
 
@@ -652,5 +651,147 @@ Tambahkan kode berikut untuk menangani ketika terjadi error. Kemudian hot restar
 
 - Apakah ada perbedaan UI dengan langkah sebelumnya? Mengapa demikian?
   - Tidak ada, karena perubahan hanya penambahan jika terjadi error
-- Capture hasil praktikum Anda berupa GIF dan lampirkan di README. Lalu lakukan commit dengan pesan "W11: Soal 14".
+- Capture hasil praktikum Anda berupa GIF dan lampirkan di README. Lalu lakukan commit dengan pesan "W11: Soal 14".\
   ![hasil](./img/p6result.webp)
+
+# Praktikum 8: Navigation route dengan Future Function
+
+## Langkah 1: Buat file baru navigation_first.dart
+
+Buatlah file baru ini di project lib Anda.
+
+## Langkah 2: Isi kode navigation_first.dart
+
+### Soal 15
+
+- Tambahkan nama panggilan Anda pada tiap properti title sebagai identitas pekerjaan Anda.
+- Silakan ganti dengan warna tema favorit Anda.
+
+```dart
+import 'package:books/navigation_second.dart';
+import 'package:flutter/material.dart';
+
+class NavigationFirst extends StatefulWidget {
+  const NavigationFirst({super.key});
+
+  @override
+  State<NavigationFirst> createState() => _NavigationFirstState();
+}
+
+class _NavigationFirstState extends State<NavigationFirst> {
+  Color color = Colors.blue.shade700;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: color,
+      appBar: AppBar(title: const Text('Navigation First Screen - Widi')),
+      body: Center(
+        child: ElevatedButton(
+          child: const Text('Change Color'),
+          onPressed: () {
+            _navigateAndGetColor(context);
+          },
+        ),
+      ),
+    );
+  }
+}
+```
+
+## Langkah 3: Tambah method di class \_NavigationFirstState
+
+Tambahkan method ini.
+
+```dart
+Future _navigateAndGetColor(BuildContext context) async {
+  color =
+      await Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const NavigationSecond()),
+      ) ??
+      Colors.blue;
+  setState(() {});
+}
+```
+
+## Langkah 4: Buat file baru navigation_second.dart
+
+Buat file baru ini di project lib Anda. Silakan jika ingin mengelompokkan view menjadi satu folder dan sesuaikan impor yang dibutuhkan.
+
+## Langkah 5: Buat class NavigationSecond dengan StatefulWidget
+
+```dart
+import 'package:flutter/material.dart';
+
+class NavigationSecond extends StatefulWidget {
+  const NavigationSecond({super.key});
+
+  @override
+  State<NavigationSecond> createState() => _NavigationSecondState();
+}
+
+class _NavigationSecondState extends State<NavigationSecond> {
+  @override
+  Widget build(BuildContext context) {
+    Color color;
+    return Scaffold(
+      appBar: AppBar(title: const Text('Navigation Second Screen')),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            ElevatedButton(
+              child: const Text('Red'),
+              onPressed: () {
+                color = Colors.red.shade700;
+                Navigator.pop(context, color);
+              },
+            ),
+            ElevatedButton(
+              child: const Text('Green'),
+              onPressed: () {
+                color = Colors.green.shade700;
+                Navigator.pop(context, color);
+              },
+            ),
+            ElevatedButton(
+              child: const Text('Blue'),
+              onPressed: () {
+                color = Colors.blue.shade700;
+                Navigator.pop(context, color);
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+```
+
+## Langkah 6: Edit main.dart
+
+Lakukan edit properti home.
+
+```dart
+home: const NavigationFirst(),
+```
+
+## Langkah 7: Run
+
+Lakukan run, jika terjadi error silakan diperbaiki.
+
+### Soal 16
+
+- Cobalah klik setiap button, apa yang terjadi ? Mengapa demikian ?
+
+  - Saat menekan tombol 'Change Color' (Halaman 1): Aplikasi berpindah dari Halaman 1 (NavigationFirst) ke Halaman 2 (NavigationSecond).
+  - Saat menekan salah satu tombol warna (misal 'Orange') (Halaman 2): Aplikasi kembali ke Halaman 1, dan warna latar belakang Halaman 1 berubah menjadi warna yang dipilih.
+
+- Gantilah 3 warna pada langkah 5 dengan warna favorit Anda!
+  - Colors.pink.shade100
+  - Colors.green.shade200
+  - Colors.blue.shade200
+- Capture hasil praktikum Anda berupa GIF dan lampirkan di README. Lalu lakukan commit dengan pesan "W11: Soal 16".\
+  ![hasil](./img/p8result.webp)
