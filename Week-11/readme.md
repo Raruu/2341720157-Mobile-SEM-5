@@ -555,9 +555,102 @@ Tambahkan widget loading seperti kode berikut. Lalu hot restart, perhatikan peru
   ```
 
 - Apakah Anda mendapatkan koordinat GPS ketika run di browser? Mengapa demikian?\
+
   - Ya, Saya mendapatkan koordinat ketika run di browser (chrome):
-  ![chrome](./img/p6chrome.webp)
+    ![chrome](./img/p6chrome.webp)
 
 - Capture hasil praktikum Anda berupa GIF dan lampirkan di README. Lalu lakukan commit dengan pesan "W11: Soal 12".
   Hasil:\
+  ![hasil](./img/p6result.webp)
+
+# Praktikum 7: Manajemen Future dengan FutureBuilder
+
+## Langkah 1: Modifikasi method getPosition()
+
+Buka file geolocation.dart kemudian ganti isi method dengan kode ini.
+
+```dart
+Future<Position> getPosition() async {
+  await Geolocator.requestPermission();
+  await Geolocator.isLocationServiceEnabled();
+  await Future.delayed(const Duration(seconds: 1));
+  Position? position = await Geolocator.getCurrentPosition();
+  return position;
+}
+```
+
+## Langkah 2: Tambah variabel
+
+Tambah variabel ini di class \_LocationScreenState
+
+```dart
+Future<Position>? position;
+```
+
+## Langkah 3: Tambah initState()
+
+Tambah method ini dan set variabel position
+
+```dart
+@override
+void initState() {
+  super.initState();
+  position = getPosition();
+}
+```
+
+## Langkah 4: Edit method build()
+
+Ketik kode berikut dan sesuaikan. Kode lama bisa Anda comment atau hapus.
+
+```dart
+@override
+Widget build(BuildContext context) {
+  return Scaffold(
+    appBar: AppBar(title: Text('Current Location - Widi')),
+    body: Center(
+      child: FutureBuilder<Position>(
+        future: position,
+        builder: (BuildContext context, AsyncSnapshot<Position> snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const CircularProgressIndicator();
+          } else if (snapshot.connectionState == ConnectionState.done) {
+            return Text(snapshot.data.toString());
+          } else if (snapshot.hasError) {
+            return Text('Error: ${snapshot.error}');
+          } else {
+            return const Text('');
+          }
+        },
+      ),
+    ),
+  );
+}
+```
+
+### Soal 13
+
+- Apakah ada perbedaan UI dengan praktikum sebelumnya? Mengapa demikian?
+  - Tidak ada, karena perubahan bukan pada bagian ui
+- Capture hasil praktikum Anda berupa GIF dan lampirkan di README. Lalu lakukan commit dengan pesan "W11: Soal 13".
+  ![hasil](./img/p6result.webp)
+- Seperti yang Anda lihat, menggunakan FutureBuilder lebih efisien, clean, dan reactive dengan Future bersama UI.
+
+## Langkah 5: Tambah handling error
+
+Tambahkan kode berikut untuk menangani ketika terjadi error. Kemudian hot restart.
+
+```dart
+...
+} else if (snapshot.hasError) {
+  return Text('Error: ${snapshot.error}');
+} else {
+...
+```
+
+### Soal 14
+
+- Apakah ada perbedaan UI dengan langkah sebelumnya? Mengapa demikian?
+  - Tidak ada, karena perubahan hanya penambahan jika terjadi error
+- Capture hasil praktikum Anda berupa GIF dan lampirkan di README. Lalu lakukan commit dengan pesan "W11: Soal 14".
   ![hasil](./img/p6result.webp)
