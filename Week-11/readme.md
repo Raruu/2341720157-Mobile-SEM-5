@@ -555,6 +555,7 @@ Tambahkan widget loading seperti kode berikut. Lalu hot restart, perhatikan peru
   ```
 
 - Apakah Anda mendapatkan koordinat GPS ketika run di browser? Mengapa demikian?
+
   - Ya, Saya mendapatkan koordinat ketika run di browser (chrome):
     ![chrome](./img/p6chrome.webp)
 
@@ -795,3 +796,115 @@ Lakukan run, jika terjadi error silakan diperbaiki.
   - Colors.blue.shade200
 - Capture hasil praktikum Anda berupa GIF dan lampirkan di README. Lalu lakukan commit dengan pesan "W11: Soal 16".\
   ![hasil](./img/p8result.webp)
+
+# Praktikum 9: Memanfaatkan async/await dengan Widget Dialog
+
+## Langkah 1: Buat file baru navigation_dialog.dart
+
+Buat file dart baru di folder lib project Anda.
+
+## Langkah 2: Isi kode navigation_dialog.dart
+
+```dart
+import 'package:flutter/material.dart';
+
+class NavigationDialogScreen extends StatefulWidget {
+  const NavigationDialogScreen({super.key});
+
+  @override
+  State<NavigationDialogScreen> createState() => _NavigationDialogScreenState();
+}
+
+class _NavigationDialogScreenState extends State<NavigationDialogScreen> {
+  Color color = Colors.blue.shade700;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: color,
+      appBar: AppBar(title: const Text('Navigation Dialog Screen - Widi')),
+      body: Center(
+        child: ElevatedButton(
+          child: const Text('Change Color'),
+          onPressed: () {},
+        ),
+      ),
+    );
+  }
+}
+```
+
+## Langkah 3: Tambah method async
+
+```dart
+_showColorDialog(BuildContext context) async {
+  await showDialog(
+    barrierDismissible: false,
+    context: context,
+    builder: (_) {
+      return AlertDialog(
+        title: const Text('Very important question'),
+        content: const Text('Please choose a color'),
+        actions: <Widget>[
+          TextButton(
+            child: const Text('Pink - 100'),
+            onPressed: () {
+              color = Colors.pink.shade100;
+              Navigator.pop(context, color);
+            },
+          ),
+          TextButton(
+            child: const Text('Green - 200'),
+            onPressed: () {
+              color = Colors.green.shade200;
+              Navigator.pop(context, color);
+            },
+          ),
+          TextButton(
+            child: const Text('Blue - 200'),
+            onPressed: () {
+              color = Colors.blue.shade200;
+              Navigator.pop(context, color);
+            },
+          ),
+        ],
+      );
+    },
+  );
+}
+```
+
+## Langkah 4: Panggil method di ElevatedButton
+
+```dart
+onPressed: () {
+  _showColorDialog(context).then((value) => setState(() {}));
+},
+```
+
+## Langkah 5: Edit main.dart
+
+Ubah properti home
+
+```dart
+home: const NavigationDialogScreen(),
+```
+
+## Langkah 6: Run
+
+Coba ganti warna background dengan widget dialog tersebut. Jika terjadi error, silakan diperbaiki. Jika berhasil, akan tampil seperti gambar berikut.
+
+### Soal 17
+
+- Cobalah klik setiap button, apa yang terjadi ? Mengapa demikian ?
+
+  - Saat menekan tombol 'Change Color': Sebuah AlertDialog (pop-up) muncul di atas halaman.
+  - Saat menekan salah satu pilihan warna (misal 'Amber'): Dialog tertutup, dan warna latar belakang halaman berubah menjadi warna yang dipilih (misal 'Amber').
+  - Saat menekan tombol 'Cancel' (atau area di luar dialog): Dialog tertutup, dan warna latar belakang halaman tidak berubah.
+
+- Gantilah 3 warna pada langkah 3 dengan warna favorit Anda!
+  - Colors.pink.shade100
+  - Colors.green.shade200
+  - Colors.blue.shade200
+- Capture hasil praktikum Anda berupa GIF dan lampirkan di README. Lalu lakukan commit dengan pesan "W11: Soal 17".\
+    ![hasil](./img/p9result.webp)
