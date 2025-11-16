@@ -229,8 +229,231 @@ Anda boleh comment atau hapus kode sebelumnya, lalu ketika kode seperti berikut.
 ### Jelaskan perbedaan menggunakan listen dan await for (langkah 9) !
 
 Perbedaan `await` for dan `listen()` ada pada cara menangani aliran data dan efeknya terhadap jalannya program.
+
 - `await` for bekerja seperti perulangan “tunggu-baca”: setiap kali ada data baru, baris kode berikutnya baru dieksekusi setelah data itu diproses; alur program terhenti sampai stream selesai atau dihentikan. Cocok bila urutan data harus diproses satu per satu tanpa gangguan.
 - `listen()` justru “lepas tangan”: ia mendaftarkan callback ke stream lalu langsung melanjutkan ke baris berikutnya, sambil menjalankan callback setiap kali data masuk. Karena tidak memblokir, metode ini memungkinkan UI tetap responsif, error ditangani lewat onError, ada pilihan onDone saat stream selesai, serta subscription-nya bisa dipause, diresume, atau dicancel kapan saja.
 
-
 ### Lakukan commit hasil jawaban Soal 5 dengan pesan "W12: Jawaban Soal 5"
+
+---
+
+# Praktikum 2: Stream controllers dan sinks
+
+StreamControllers akan membuat jembatan antara Stream dan Sink. Stream berisi data secara sekuensial yang dapat diterima oleh subscriber manapun, sedangkan Sink digunakan untuk mengisi (injeksi) data.
+
+Secara sederhana, StreamControllers merupakan stream management. Ia akan otomatis membuat stream dan sink serta beberapa method untuk melakukan kontrol terhadap event dan fitur-fitur yang ada di dalamnya.
+
+Anda dapat membayangkan stream sebagai pipa air yang mengalir searah, dari salah satu ujung Anda dapat mengisi data dan dari ujung lain data itu keluar. Anda dapat melihat konsep stream pada gambar diagram berikut ini.
+
+## Langkah 1: Buka file stream.dart
+
+Lakukan impor dengan mengetik kode ini.
+
+```dart
+import 'dart:async';
+```
+
+## Langkah 2: Tambah class NumberStream
+
+Tetap di file stream.dart tambah class baru seperti berikut.
+
+```dart
+class NumberStream {
+}
+```
+
+## Langkah 3: Tambah StreamController
+
+Di dalam class NumberStream buatlah variabel seperti berikut.
+
+```dart
+final StreamController<int> controller = StreamController<int>();
+```
+
+## Langkah 4: Tambah method addNumberToSink
+
+Tetap di class NumberStream buatlah method ini
+
+```dart
+  void addNumberToSink(int newNumber) {
+    controller.sink.add(newNumber);
+  }
+```
+
+## Langkah 5: Tambah method close()
+
+```dart
+  close() {
+    controller.close();
+  }
+```
+
+## Langkah 6: Buka main.dart
+
+Ketik kode import seperti berikut
+
+```dart
+import 'dart:async';
+import 'dart:math';
+```
+
+## Langkah 7: Tambah variabel
+
+Di dalam class \_StreamHomePageState ketik variabel berikut
+
+```dart
+  int lastNumber = 0;
+  late StreamController numberStreamController;
+  late NumberStream numberStream;
+```
+
+## Langkah 8: Edit initState()
+
+```dart
+  @override
+  void initState() {
+    numberStream = NumberStream();
+    numberStreamController = numberStream.controller;
+    Stream stream = numberStreamController.stream;
+    stream.listen((event) {
+      setState(() {
+        lastNumber = event;
+      });
+    });
+    super.initState();
+  }
+```
+
+## Langkah 9: Edit dispose()
+
+```dart
+  @override
+  void dispose() {
+    numberStreamController.close();
+    super.dispose();
+  }
+```
+
+## Langkah 10: Tambah method addRandomNumber()
+
+```dart
+void addRandomNumber() {
+  Random random = Random();
+  int myNum = random.nextInt(10);
+  numberStream.addNumberToSink(myNum);
+}
+```
+
+## Langkah 11: Edit method build()
+
+```dart
+      body: SizedBox(
+        width: double.infinity,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text(lastNumber.toString()),
+            ElevatedButton(
+              onPressed: () => addRandomNumber(),
+              child: const Text('New Random Number'),
+            )
+          ],
+        ),
+      ),
+```
+
+## Langkah 12: Run
+
+Lakukan running pada aplikasi Flutter Anda, maka akan terlihat seperti gambar berikut.
+
+## Soal 6
+
+#### Jelaskan maksud kode langkah 8 dan 10 tersebut!
+
+- Langkah 8 – `initState`:
+  Ketika widget baru dibuat, fungsi ini menyiapkan “saluran data”. Ia membuat objek NumberStream, mengambil StreamController-nya, lalu mendaftarkan pendengar (listen). Setiap ada angka masuk, pendengar memperbarui lastNumber via setState, sehingga layar langsung menampilkan nilai baru. Intinya: pasang antena agar aplikasi otomatis mereseti tampilan begitu data mengalir.
+- Langkah 10 – `addRandomNumber`:
+  Tombol ini menjadi “keran” tambahan. Setiap ditekan, ia buat angka 0–9 secara acak dan menyemburkannya ke saluran melalui addNumberToSink. Data yang keluar langsung ditangkap antena tadi, lalu muncul di layar. Singkatnya: tekan → angka random masuk → UI langsung update.
+  merupakan konsep fundamental dari arsitektur stream.
+
+#### Capture hasil praktikum Anda berupa GIF dan lampirkan di README.
+
+![doksli](./img/p2result.webp)
+
+#### Lalu lakukan commit dengan pesan "W12: Jawaban Soal 6".
+
+---
+
+## Langkah 13: Buka stream.dart
+
+Tambahkan method berikut ini.
+
+```dart
+  addError() {
+    controller.sink.addError('error');
+  }
+```
+
+## Langkah 14: Buka main.dart
+
+Tambahkan method onError di dalam class StreamHomePageState pada method listen di fungsi initState() seperti berikut ini.
+
+```dart
+  @override
+  void initState() {
+    numberStream = NumberStream();
+    numberStreamController = numberStream.controller;
+    Stream stream = numberStreamController.stream;
+    stream.listen((event) {
+      setState(() {
+        lastNumber = event;
+      });
+    }).onError((error) {
+      setState(() {
+        lastNumber = -1;
+      });
+    });
+    super.initState();
+  }
+```
+
+## Langkah 15: Edit method addRandomNumber()
+
+Lakukan comment pada dua baris kode berikut, lalu ketik kode seperti berikut ini.
+
+```dart
+  void addRandomNumber() {
+    Random random = Random();
+    // int myNum = random.nextInt(10);
+    // numberStream.addNumberToSink(myNum);
+    numberStream.addError();
+  }
+```
+
+## Soal 7
+
+### Jelaskan maksud kode langkah 13 sampai 15 tersebut!
+
+Ketiga langkah tersebut mengimplementasikan mekanisme error handling dalam stream untuk menangani kondisi eksepsional yang mungkin terjadi selama pemrosesan data.
+
+**Langkah 13** menambahkan method `addError()` pada class `NumberStream` yang berfungsi sebagai interface untuk menginjeksikan error ke dalam stream melalui `controller.sink.addError()`, memungkinkan simulasi atau penanganan kondisi error secara terkontrol.
+
+**Langkah 14** melengkapi listener dengan callback `onError()` yang akan terpicu ketika stream mengirimkan error, dimana implementasinya mengubah nilai `lastNumber` menjadi -1 sebagai indikator visual bahwa telah terjadi error, memberikan feedback kepada pengguna tentang kondisi abnormal aplikasi.
+
+**Langkah 15** memodifikasi method `addRandomNumber()` untuk men-trigger error dengan memanggil `numberStream.addError()` sebagai pengganti pengiriman data normal, berfungsi sebagai simulasi untuk menguji apakah mekanisme error handling bekerja dengan baik. Kombinasi ketiga langkah ini menciptakan alur error handling yang lengkap: dari injeksi error (source), propagasi melalui stream, hingga penanganan di subscriber (listener), yang merupakan praktik penting dalam pengembangan aplikasi robust untuk menangani skenario failure dengan graceful degradation.
+
+### Kembalikan kode seperti semula pada Langkah 15, comment addError() agar Anda dapat melanjutkan ke praktikum 3 berikutnya.
+
+```dart
+  void addRandomNumber() {
+    Random random = Random();
+    int myNum = random.nextInt(10);
+    numberStream.addNumberToSink(myNum);
+    // numberStream.addError();
+  }
+```
+
+#### Lakukan commit dengan pesan "W12: Jawaban Soal 7".
+
+---
