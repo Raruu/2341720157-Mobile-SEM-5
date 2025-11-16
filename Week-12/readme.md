@@ -521,3 +521,137 @@ Langkah 1–3 menyusun pipa transformasi pada aliran data. Pertama, dibuat objek
 #### Lakukan commit dengan pesan "W12: Jawaban Soal 8".
 
 ---
+
+# Praktikum 4: Subscribe ke stream events
+
+Dari praktikum sebelumnya, Anda telah menggunakan method listen mendapatkan nilai dari stream. Ini akan menghasilkan sebuah Subscription. Subscription berisi method yang dapat digunakan untuk melakukan listen pada suatu event dari stream secara terstruktur.
+
+Pada praktikum 4 ini, kita akan gunakan Subscription untuk menangani event dan error dengan teknik praktik baik (best practice), dan menutup Subscription tersebut.
+
+Setelah Anda menyelesaikan praktikum 3, Anda dapat melanjutkan praktikum 4 ini. Selesaikan langkah-langkah praktikum berikut ini menggunakan editor Visual Studio Code (VS Code) atau Android Studio atau code editor lain kesukaan Anda. Jawablah di laporan praktikum Anda pada setiap soal yang ada di beberapa langkah praktikum ini.
+
+## Langkah 1: Tambah variabel
+
+Tambahkan variabel berikut di class \_StreamHomePageState
+
+```dart
+  late StreamSubscription subscription;
+```
+
+## Langkah 2: Edit initState()
+
+Edit kode seperti berikut ini.
+
+```dart
+    subscription = stream.transform(transformer).listen((event) {
+      setState(() {
+        lastNumber = event;
+      });
+    });
+```
+
+## Langkah 3: Tetap di initState()
+
+Tambahkan kode berikut ini.
+
+```dart
+    subscription.onError((error) {
+      setState(() {
+        lastNumber = -1;
+      });
+    });
+```
+
+## Langkah 4: Tambah properti onDone()
+
+Tambahkan dibawahnya kode ini setelah onError
+
+```dart
+    subscription.onDone(() {
+      print('OnDone was called');
+    });
+```
+
+## Langkah 5: Tambah method baru
+
+Ketik method ini di dalam class \_StreamHomePageState
+
+```dart
+  void stopStream() {
+    numberStreamController.close();
+  }
+```
+
+## Langkah 6: Pindah ke method dispose()
+
+Jika method dispose() belum ada, Anda dapat mengetiknya dan dibuat override. Ketik kode ini didalamnya.
+
+```dart
+  @override
+  void dispose() {
+    subscription.cancel();
+    super.dispose();
+  }
+```
+
+## Langkah 7: Pindah ke method build()
+
+Tambahkan button kedua dengan isi kode seperti berikut ini.
+
+```dart
+            ElevatedButton(
+              onPressed: () => stopStream(),
+              child: const Text('Stop Subscription'),
+            ),
+```
+
+## Langkah 8: Edit method addRandomNumber()
+
+Edit kode seperti berikut ini.
+
+```dart
+  void addRandomNumber() {
+    Random random = Random();
+    int myNum = random.nextInt(10);
+    if (!numberStreamController.isClosed) {
+      numberStream.addNumberToSink(myNum);
+    } else {
+      setState(() {
+        lastNumber = -1;
+      });
+    }
+  }
+```
+
+## Langkah 9: Run
+
+Anda akan melihat dua button seperti gambar berikut.
+
+## Langkah 10: Tekan button 'Stop Subscription'
+
+Anda akan melihat pesan di Debug Console seperti berikut.
+
+## Soal 9
+
+### Jelaskan maksud kode langkah 2, 6 dan 8 tersebut!
+
+- Langkah 2 (Modifikasi `initState`):
+  Pada langkah ini, hasil dari proses transformasi dan langganan stream disimpan ke dalam variabel `subscription` dengan tipe `StreamSubscription`. Pendekatan ini berbeda dari penggunaan rantai metode sebelumnya, karena menampung referensi subscription ke dalam variabel instance. Hal ini memberikan kontrol lebih terhadap alur stream, seperti kemampuan untuk menjeda, melanjutkan, atau membatalkan langganan, serta menambahkan penanganan error dan penutupan stream secara terpisah. Ini merupakan praktik yang dianjurkan untuk pengelolaan stream yang lebih aman dan terstruktur.
+- Langkah 6 (Modifikasi `dispose`):
+  Metode `dispose()` ditambahkan pemanggilan `subscription.cancel()` guna memutus langganan terhadap stream saat widget dihancurkan. Langkah ini penting untuk mencegah kebocoran memori (memory leak) dan memastikan bahwa tidak ada pembaruan UI yang dipicu setelah widget tidak lagi aktif. Dengan membatalkan subscription, aplikasi terhindar dari potensi error akibat pemanggilan `setState()` pada widget yang sudah tidak ada dalam pohon widget, sehingga menjaga stabilitas aplikasi.
+- Langkah 8 (Modifikasi `addRandomNumber`):
+  Metode ini dilengkapi dengan pengecekan status controller menggunakan `!numberStreamController`.isClosed sebelum mengirim data ke stream. Jika controller masih terbuka, data akan dikirimkan seperti biasa. Namun, jika controller sudah ditutup (misalnya setelah langganan dihentikan), aplikasi akan menampilkan nilai -1 sebagai tanda bahwa stream tidak lagi aktif. Penerapan ini merupakan bentuk defensive programming yang bertujuan untuk menghindari exception saat mencoba mengirim data ke stream yang sudah tertutup, sehingga meningkatkan ketahanan aplikasi terhadap kondisi tidak terduga.
+
+### Capture hasil praktikum Anda berupa GIF dan lampirkan di README.
+
+#### Hasil Subscribe stream Events
+
+![Subscribe Stream Events](./img/p4result.webp)
+
+#### Hasil stop Subscribe stream Events
+
+![awwwaasdasdadsss setop](./img/p4result2.png)
+
+### Lalu lakukan commit dengan pesan "W12: Jawaban Soal 9".
+
+---
