@@ -655,3 +655,96 @@ Anda akan melihat pesan di Debug Console seperti berikut.
 ### Lalu lakukan commit dengan pesan "W12: Jawaban Soal 9".
 
 ---
+
+# Praktikum 5: Multiple stream subscriptions
+
+Secara default, stream hanya bisa digunakan untuk satu subscription. Jika Anda mencoba untuk melakukan subscription yang sama lebih dari satu, maka akan terjadi error. Untuk menangani hal itu, tersedia broadcast stream yang dapat digunakan untuk multiple subscriptions. Pada praktikum ini, Anda akan mencoba untuk melakukan multiple stream subscriptions.
+
+Setelah Anda menyelesaikan praktikum 4, Anda dapat melanjutkan praktikum 5 ini. Selesaikan langkah-langkah praktikum berikut ini menggunakan editor Visual Studio Code (VS Code) atau Android Studio atau code editor lain kesukaan Anda. Jawablah di laporan praktikum Anda pada setiap soal yang ada di beberapa langkah praktikum ini.
+
+## Langkah 1: Buka file main.dart
+
+Ketik variabel berikut di class \_StreamHomePageState
+
+```dart
+  late StreamSubscription subscription2;
+  String values = '';
+```
+
+## Langkah 2: Edit initState()
+
+Ketik kode seperti berikut.
+
+```dart
+    subscription2 = stream.listen((event) {
+      setState(() {
+        values += '$event - ';
+      });
+    });
+```
+
+## Langkah 3: Run
+
+Lakukan run maka akan tampil error seperti gambar berikut.
+
+![Error Multiple Subscription](./img/p5s3.png)
+
+## Soal 10
+
+### Jelaskan mengapa error itu bisa terjadi ?
+
+Exception `Bad state: Stream has already been listened to` muncul karena stream yang digunakan bertipe single-subscription; ia hanya boleh di-listen() satu kali. Listener pertama (subscription) sudah mengikat stream, sehingga pembuatan listener kedua (subscription2) ditolak runtime agar tidak terjadi konflik penomoran event. Dart memang merancang tipe ini untuk konsumen tunggal guna menjamin urutan dan keutuhan data. Agar bisa menerima lebih dari satu listener, stream harus dibuat melalui StreamController.broadcast() yang secara eksplisit mengizinkan banyak langganan, meski dengan konsekuensi subscriber late tidak lagi menerima event lampau.
+
+### Lakukan commit dengan pesan "W12: Jawaban Soal 10".
+
+---
+
+## Langkah 4: Set broadcast stream
+
+Ketik kode seperti berikut di method initState()
+
+```dart
+  @override
+  void initState() {
+    numberStream = NumberStream();
+    numberStreamController = numberStream.controller;
+    Stream stream = numberStreamController.stream.asBroadcastStream();
+    ...
+```
+
+## Langkah 5: Edit method build()
+
+Tambahkan text seperti berikut
+
+```dart
+            children: [
+              Text(lastNumber.toString()),
+              ElevatedButton(
+                onPressed: () => addRandomNumber(),
+                child: const Text('New Random Number'),
+              ),
+              ElevatedButton(
+                onPressed: () => stopStream(),
+                child: const Text('Stop Subscription'),
+              ),
+              Text(values),
+            ],
+```
+
+## Langkah 6: Run
+
+Tekan button 'New Random Number' beberapa kali, maka akan tampil teks angka terus bertambah sebanyak dua kali.
+
+## Soal 11
+
+### Jelaskan mengapa hal itu bisa terjadi ?
+
+Angka tampak muncul ganda karena dua listener (`subscription` dan `subscription2`) menangkap satu event yang sama dari broadcast stream. Setelah asBroadcastStream() dijalankan, stream mengizinkan banyak subscriber sehingga setiap angka yang dikirim secara simultan diterima oleh kedua subscription. Subscriber pertama memprosesnya dengan transformasi (×10) dan menampilkan hasilnya di `lastNumber`, sedangkan subscriber kedua menyimpan nilai aslinya ke dalam string `values`. Akibatnya, satu kali injeksi data menghasilkan dua tampilan—yang tampak seperti duplikasi, padahal merupakan dua versi dari datum tunggal yang dilihat oleh listener terpisah
+
+### Capture hasil praktikum Anda berupa GIF dan lampirkan di README.
+
+![Broadcast Stream](./img/p5result.webp)
+
+### Lakukan commit dengan pesan "W12: Jawaban Soal 11".
+
+---
