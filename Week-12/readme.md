@@ -457,3 +457,67 @@ Ketiga langkah tersebut mengimplementasikan mekanisme error handling dalam strea
 #### Lakukan commit dengan pesan "W12: Jawaban Soal 7".
 
 ---
+
+# Praktikum 3: Injeksi data ke streams
+
+Skenario yang umum dilakukan adalah melakukan manipulasi atau transformasi data stream sebelum sampai pada UI end user. Hal ini sangatlah berguna ketika Anda membutuhkan untuk filter data berdasarkan kondisi tertentu, melakukan validasi data, memodifikasinya, atau melakukan proses lain yang memicu beberapa output baru. Contohnya melakukan konversi angka ke string, membuat sebuah perhitungan, atau menghilangkan data yang berulang terus tampil.
+
+Pada praktikum 3 ini, Anda akan menggunakan StreamTransformers ke dalam stream untuk melakukan map dan filter data.
+
+Setelah Anda menyelesaikan praktikum 2, Anda dapat melanjutkan praktikum 3 ini. Selesaikan langkah-langkah praktikum berikut ini menggunakan editor Visual Studio Code (VS Code) atau Android Studio atau code editor lain kesukaan Anda. Jawablah di laporan praktikum Anda pada setiap soal yang ada di beberapa langkah praktikum ini.
+
+## Langkah 1: Buka main.dart
+
+Tambahkan variabel baru di dalam class \_StreamHomePageState
+
+```dart
+  late StreamTransformer transformer;
+```
+
+## Langkah 2: Tambahkan kode ini di initState
+
+```dart
+    transformer = StreamTransformer<int, int>.fromHandlers(
+      handleData: (value, sink) {
+        sink.add(value * 10);
+      },
+      handleError: (error, trace, sink) {
+        sink.add(-1);
+      },
+      handleDone: (sink) => sink.close(),
+    );
+```
+
+## Langkah 3: Tetap di initState
+
+Lakukan edit seperti kode berikut.
+
+```dart
+    stream.transform(transformer).listen((event) {
+      setState(() {
+        lastNumber = event;
+      });
+    }).onError((error) {
+      setState(() {
+        lastNumber = -1;
+      });
+    });
+```
+
+## Langkah 4: Run
+
+Terakhir, run atau tekan F5 untuk melihat hasilnya jika memang belum running. Bisa juga lakukan hot restart jika aplikasi sudah running. Maka hasilnya akan seperti gambar berikut ini. Anda akan melihat tampilan angka dari 0 hingga 90.
+
+## Soal 8
+
+### Jelaskan maksud kode langkah 1-3 tersebut!
+
+Langkah 1–3 menyusun pipa transformasi pada aliran data. Pertama, dibuat objek `StreamTransformer<int,int>` bernama `transformer` yang bertugas sebagai middleware. Transformer ini, yang diinisialisasi melalui `fromHandlers()`, memproses setiap nilai masukan dengan mengalikannya 10, mengubah error menjadi –1, dan menutup aliran bila sudah selesai. Terakhir, transformer dipasang pada stream melalui metode `transform()` sehingga seluruh data harus melewati pipa tersebut sebelum sampai ke listener dan di-render pada antarmuka. Pendekatan ini menerapkan pola data pipeline: logika transformasi terpisah dari logika tampilan, sehingga kode menjadi lebih terstruktur dan mudah dirawat.
+
+#### Capture hasil praktikum Anda berupa GIF dan lampirkan di README.
+
+![Stream Transformer](./img/p3result.webp)
+
+#### Lakukan commit dengan pesan "W12: Jawaban Soal 8".
+
+---
