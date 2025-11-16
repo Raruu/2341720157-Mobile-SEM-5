@@ -512,7 +512,7 @@ Terakhir, run atau tekan F5 untuk melihat hasilnya jika memang belum running. Bi
 
 ### Jelaskan maksud kode langkah 1-3 tersebut!
 
-Langkah 1–3 menyusun pipa transformasi pada aliran data. Pertama, dibuat objek `StreamTransformer<int,int>` bernama `transformer` yang bertugas sebagai middleware. Transformer ini, yang diinisialisasi melalui `fromHandlers()`, memproses setiap nilai masukan dengan mengalikannya 10, mengubah error menjadi –1, dan menutup aliran bila sudah selesai. Terakhir, transformer dipasang pada stream melalui metode `transform()` sehingga seluruh data harus melewati pipa tersebut sebelum sampai ke listener dan di-render pada antarmuka. Pendekatan ini menerapkan pola data pipeline: logika transformasi terpisah dari logika tampilan, sehingga kode menjadi lebih terstruktur dan mudah dirawat.
+Langkah 1–3 menyusun pipa transformasi pada aliran data. Pertama, dibuat objek `StreamTransformer<int,int>` bernama `transformer` yang bertugas sebagai middleware. Transformer ini, yang diinisialisasi melalui `fromHandlers()`, memproses setiap nilai masukan dengan mengalikannya 10, mengubah error menjadi –1, dan menutup aliran bila sudah selesai. Terakhir, transformer dipasang pada stream melalui metode `transform()` sehingga seluruh data harus melewati pipa tersebut sebelum sampai ke listener dan di-render pada antarmuka. Pendekatan ini menerapkan pola data pipeline: logika transformasi terpisah dari logika tampilan, sehingga kode menjadi lebih terstruktur dan maintainable.
 
 #### Capture hasil praktikum Anda berupa GIF dan lampirkan di README.
 
@@ -748,3 +748,153 @@ Angka tampak muncul ganda karena dua listener (`subscription` dan `subscription2
 ### Lakukan commit dengan pesan "W12: Jawaban Soal 11".
 
 ---
+
+# Praktikum 6: StreamBuilder
+
+StreamBuilder adalah sebuah widget untuk melakukan listen terhadap event dari stream. Ketika sebuah event terkirim, maka akan dibangun ulang semua turunannya. Seperti halnya widget FutureBuilder pada pertemuan pekan lalu, StreamBuilder berguna untuk membangun UI secara reaktif yang diperbarui setiap data baru tersedia.
+
+Setelah Anda menyelesaikan praktikum 5, Anda dapat melanjutkan praktikum 6 ini. Selesaikan langkah-langkah praktikum berikut ini menggunakan editor Visual Studio Code (VS Code) atau Android Studio atau code editor lain kesukaan Anda. Jawablah di laporan praktikum Anda pada setiap soal yang ada di beberapa langkah praktikum ini.
+
+## Langkah 1: Buat Project Baru
+
+Buatlah sebuah project flutter baru dengan nama streambuilder_widi di folder codelab_week12
+
+## Langkah 2: Buat file baru stream.dart
+
+Ketik kode ini
+
+```dart
+import 'dart:math';
+
+class NumberStream {
+
+}
+```
+
+## Langkah 3: Tetap di file stream.dart
+
+Ketik kode seperti berikut.
+
+```dart
+  Stream<int> getNumbers() async* {
+    yield* Stream.periodic(const Duration(seconds: 1), (int t) {
+      Random random = Random();
+      int myNum = random.nextInt(10);
+      return myNum;
+    });
+  }
+```
+
+## Langkah 4: Edit main.dart
+
+Ketik kode seperti berikut ini.
+
+```dart
+import 'package:flutter/material.dart';
+import 'stream.dart';
+import 'dart:async';
+
+void main() {
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Stream',
+      theme: ThemeData(
+        primarySwatch: Colors.deepPurple,
+      ),
+      home: const StreamHomePage(),
+    );
+  }
+}
+
+class StreamHomePage extends StatefulWidget {
+  const StreamHomePage({super.key});
+
+  @override
+  State<StreamHomePage> createState() => _StreamHomePageState();
+}
+
+class _StreamHomePageState extends State<StreamHomePage> {
+  @override
+  Widget build(BuildContext context) {
+    return Container();
+  }
+}
+```
+
+## Langkah 5: Tambah variabel
+
+Di dalam class \_StreamHomePageState, ketikan variabel ini.
+
+```dart
+  late Stream<int> numberStream;
+```
+
+## Langkah 6: Edit initState()
+
+Ketik kode seperti berikut.
+
+```dart
+  @override
+  void initState() {
+    numberStream = NumberStream().getNumbers();
+    super.initState();
+  }
+```
+
+## Langkah 7: Edit method build()
+
+```dart
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Stream'),
+      ),
+      body: StreamBuilder(
+        stream: numberStream,
+        initialData: 0,
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            print('Error!');
+          }
+          if (snapshot.hasData) {
+            return Center(
+              child: Text(
+                snapshot.data.toString(),
+                style: const TextStyle(fontSize: 96),
+              ),
+            );
+          } else {
+            return const SizedBox.shrink();
+          }
+        },
+      ),
+    );
+  }
+```
+
+## Langkah 8: Run
+
+Hasilnya, setiap detik akan tampil angka baru seperti berikut.
+
+## Soal 12
+
+### Jelaskan maksud kode pada langkah 3 dan 7 !
+
+- Langkah 3 – Method `getNumbers()`
+  Fungsi ini menghasilkan aliran bilangan bulat secara terus-menerus setiap detik. Dengan pola async*, ia mendelegasikan` Stream.periodic()` lewat `yield*`; di dalam intervalnya sebuah objek Random membangkitkan angka 0–9 yang langsung menjadi event stream. Hasilnya adalah data feed real-time yang tidak pernah berhenti dan selalu berubah secara acak.
+- Langkah 7 – StreamBuilder Widget
+  StreamBuilder membangun antarmuka secara reaktif: ia "menempel" pada `numberStream`, lalu setiap ada event baru otomatis memanggil `builder`. Parameter `snapshot` menyediakan data, error, dan status koneksi; berdasarkan isinya widget menampilkan angka besar (96 pt), pesan error, atau komponen kosong.Tanpa perlu listen maupun setState, pendekatan ini memisahkan logika bisnis dari UI sehingga kode tetap bersih dan maintainable.
+
+### Capture hasil praktikum Anda berupa GIF dan lampirkan di README.
+
+![StreamBuilder](./img/p6result.webp)
+
+### Lalu lakukan commit dengan pesan "W12: Jawaban Soal 12".
