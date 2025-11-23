@@ -467,3 +467,51 @@ Capture hasil running aplikasi Anda, kemudian impor ke laporan praktikum Anda!
 Lalu lakukan commit dengan pesan "W13: Jawaban Soal 4".
 
 ![tidak menampilkan null](./img/p2s11.png)
+
+---
+
+# PRAKTIKUM 3
+
+### Langkah 1: Buka pizza.dart dan Buat Konstanta
+
+Di bagian atas file pizza.dart, di luar class Pizza, deklarasikan konstanta untuk setiap kunci JSON.
+
+### Langkah 2: Perbarui fromJson() menggunakan Konstanta
+
+Di constructor Pizza.fromJson, ganti semua string literal kunci JSON (misalnya 'id') dengan konstanta yang sesuai (keyId).
+
+Catatan: Konstruktor ini menggunakan sintaks inisialisasi, tetapi untuk kesederhanaan, kita menggunakan sintaks body.
+
+### Langkah 3: Perbarui toJson() menggunakan Konstanta
+
+Perbarui juga method toJson() agar menggunakan konstanta yang sama.
+
+### Langkah 4: Run
+
+Jalankan aplikasi. Tidak akan ada perubahan visual, tetapi kode Anda kini lebih safe dan maintainable.
+
+### Soal 5
+
+Jelaskan maksud kode lebih safe dan maintainable!
+
+jawab:
+
+### 1. Lebih aman jika terjadi Bug
+
+- Menghindari kesalahan ketik\
+  Jika menggunakan string manual seperti 'pizzaName', kesalahan ketik seperti 'pizaName' tidak akan terdeteksi saat kompilasi, baru muncul saat aplikasi berjalan.
+  Sedangkan jika menggunakan konstanta, kesalahan ketik seperti keyNam langsung terlihat saat coding, karena editor akan memberi peringatan.
+- Konsistensi kunci\
+  Kunci yang digunakan di fromJson dan toJson akan selalu sama jika menggunakan konstanta.
+
+### 2. Lebih Mudah untuk maintenance
+
+- Perubahan hanya di satu tempat\
+  Jika kunci dari API berubah, misalnya dari 'pizzaName' menjadi 'name', maka:
+  - Tanpa konstanta: kita harus mencari dan mengganti semua kemunculan 'pizzaName' di seluruh kode.
+  - Dengan konstanta: cukup ubah nilai konstantanya saja
+
+#### Capture hasil praktikum Anda dan lampirkan di README.
+
+![penanganan error](./img/p1s22.png)
+Lalu lakukan commit dengan pesan "W13: Jawaban Soal 5".
