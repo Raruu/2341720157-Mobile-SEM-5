@@ -781,3 +781,129 @@ Jalankan aplikasi. Anda akan melihat path absolut ke direktori dokumen dan cache
 
 Capture hasil praktikum Anda dan lampirkan di README.
 Lalu lakukan commit dengan pesan "W13: Jawaban Soal 7".
+
+---
+
+# PRAKTIKUM 6
+
+Praktikum ini melanjutkan dari Praktikum 5, berfokus pada akses file system untuk mengakses directories, menggunakan library dart:io untuk operasi file.
+
+Setelah Anda menyelesaikan praktikum 5, Anda dapat melanjutkan praktikum 6 ini. Selesaikan langkah-langkah praktikum berikut ini menggunakan editor Visual Studio Code (VS Code) atau Android Studio atau code editor lain kesukaan Anda. Jawablah di laporan praktikum Anda pada setiap soal yang ada di beberapa langkah praktikum ini.
+
+Perhatian: Diasumsikan Anda telah berhasil menyelesaikan Praktikum 5.
+
+### Langkah 1: Lakukan Import dart:io
+
+Di file main.dart, tambahkan import untuk pustaka dart:io.
+
+```dart
+import 'dart:io';
+```
+
+### Langkah 2: Tambahkan Variabel File dan Text
+
+Di State class, tambahkan variabel myFile (dengan modifier late) dan fileText untuk menyimpan konten yang akan dibaca.
+
+```dart
+  late File myFile;
+  String fileText = '';
+```
+
+### Langkah 3: Buat Method writeFile()
+
+Buat method asinkron writeFile() yang menggunakan myFile.writeAsString() untuk menulis konten ke file. Kata ‘Margherita, Capricciosa, Napoli' silakan Anda ganti dengan Nama Lengkap dan NIM Anda.
+
+```dart
+Future<bool> writeFile() async {
+  try {
+    await myFile.writeAsString('Margherita, Capricciosa, Napoli');
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+```
+
+### Langkah 4: Inisialisasi File dan Panggil writeFile() di initState()
+
+Perbarui initState(): setelah getPaths() selesai, inisialisasi myFile dengan jalur lengkap di direktori dokumen, dan panggil writeFile().
+
+```dart
+  @override
+  void initState() {
+    super.initState();
+    readAndWritePreference();
+    getPaths().then((_) {
+      myFile = File('$documentPath/pizzas.txt');
+      writeFile();
+    });
+  }
+```
+
+### Langkah 5: Buat Method readFile()
+
+Buat method asinkron readFile() yang menggunakan myFile.readAsString() untuk membaca konten file dan memperbarui fileText melalui setState().
+
+```dart
+  Future<bool> readFile() async {
+    try {
+      String fileContent = await myFile.readAsString();
+      setState(() {
+        fileText = fileContent;
+      });
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+```
+
+### Langkah 6: Edit build() dan Tambahkan Tombol Baca
+
+Di method build(), tambahkan ElevatedButton yang memanggil readFile() dan Text yang menampilkan fileText di bawahnya.
+
+```dart
+          children: [
+            Text(
+              'Document Path:\n$documentPath',
+              textAlign: TextAlign.center,
+              style: const TextStyle(fontSize: 14),
+            ),
+            const Divider(),
+            Text(
+              'Temporary Path:\n$tempPath',
+              textAlign: TextAlign.center,
+              style: const TextStyle(fontSize: 14),
+            ),
+            const Divider(),
+            ElevatedButton(
+              onPressed: () => readFile(),
+              child: const Text('Read File'),
+            ),
+            Text(
+              fileText,
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.blue),
+            ),
+          ],
+```
+
+### Langkah 7: Run
+
+Jalankan aplikasi. Setelah menekan tombol 'Read File', konten yang ditulis (Margherita, Capricciosa, Napoli) akan ditampilkan atau sesuai nama dan NIM Anda.
+
+![akses file system direktori](./img/p6s7.png)
+
+### Soal 8
+
+Jelaskan maksud kode pada langkah 3 dan 7 !
+
+- Langkah 3 (Menyimpan data):\
+  Fungsi writeFile() berfungsi untuk menyimpan teks "Margherita, Capricciosa, Napoli" ke file secara asinkron.
+  Jika proses berhasil, fungsi ini mengembalikan nilai true.
+  Jika gagal, misalnya karena error, maka akan ditangkap oleh blok catch dan mengembalikan nilai false.
+- Langkah 7 (Membaca data):\
+  Saat pengguna menekan tombol ElevatedButton, sistem akan memanggil fungsi readFile() untuk membaca data yang sudah disimpan.
+  Hasilnya kemudian ditampilkan kembali ke antarmuka pengguna.
+
+Capture hasil praktikum Anda berupa GIF dan lampirkan di README.
+Lalu lakukan commit dengan pesan "W13: Jawaban Soal 8".
